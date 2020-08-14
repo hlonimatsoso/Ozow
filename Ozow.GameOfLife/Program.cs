@@ -19,13 +19,13 @@ namespace Ozow.GameOfLife
             try
             {
                 ServiceCollection serviceCollection = new ServiceCollection();
-                
+
                 ConfigureServices(serviceCollection);
-                
+
                 Run(args);
 
                 Console.ReadKey();
-                
+
                 return 0;
             }
             catch (Exception ex)
@@ -39,9 +39,9 @@ namespace Ozow.GameOfLife
         static void Run(string[] args)
         {
             IGameEngine gameEngine = serviceProvider.GetService<IGameEngine>();
-            
+
             gameEngine.Initialize();
-            
+
             gameEngine.Start();
         }
 
@@ -54,9 +54,19 @@ namespace Ozow.GameOfLife
 
             serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
 
+            serviceCollection.AddTransient<IActiveFormation, ActiveFormation>();
+            serviceCollection.AddTransient<ICell, Cell>();
+            serviceCollection.AddTransient<ICellPosition, CellPosition>();
+            serviceCollection.AddTransient<IFormation, Formation>();
+            serviceCollection.AddTransient<IGameBoard, GameBoard>();
             serviceCollection.AddTransient<IGameEngine, GameEngine>();
-            serviceCollection.AddTransient<GameEngine>();
+            serviceCollection.AddTransient<IGameUiDrawer, Piccasso>();
             serviceCollection.Configure<GameSettings>(configuration.GetSection("GameSettings"));
+            serviceCollection.AddTransient<IActiveFormation, ActiveFormation>();
+            serviceCollection.AddTransient<IInstruction, Instruction>();
+            serviceCollection.AddTransient<IMatrix, TheMatrix>();
+            serviceCollection.AddTransient<IToolBox, ToolBox>();
+
 
             serviceProvider = serviceCollection.BuildServiceProvider();
         }
