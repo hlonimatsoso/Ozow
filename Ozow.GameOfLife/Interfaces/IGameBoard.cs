@@ -10,7 +10,7 @@ namespace Ozow.GameOfLife.Interfaces
 
         public IMatrix Matrix { get; set; }
 
-        public List<IActiveFormation> ActiveFormation { get; set; }
+        public List<IActiveFormation> ActiveFormations { get; set; }
 
     }
 }

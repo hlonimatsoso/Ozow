@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozow.GameOfLife.Game;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,5 +12,7 @@ namespace Ozow.GameOfLife.Interfaces
         public List<ICellPosition> GetAllNeighbourgs(ICellPosition position);
 
         public int GenerateRandomNumber(int min, int max);
+
+        public ICellPosition GetRandomCellPosition();
     }
 }

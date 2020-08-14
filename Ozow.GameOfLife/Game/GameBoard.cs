@@ -9,19 +9,22 @@ namespace Ozow.GameOfLife.Game
     {
         public IGameUiDrawer Drawer { get; set; }
         public IMatrix Matrix { get; set; }
-        public List<IInstruction> Instructions { get ; set ; }
-        public List<IActiveFormation> ActiveFormation { get; set; }
+        public List<IInstruction> Instructions { get; set; }
+        public List<IActiveFormation> ActiveFormations { get; set; }
 
         private IGameEngine _engine;
 
         private GameSettings _gameSettings;
 
-        public GameBoard(IGameUiDrawer drawer,IMatrix matrix, IGameEngine engine, GameSettings settings)
+        private IToolBox _toolBox;
+
+        public GameBoard(IGameUiDrawer drawer, IMatrix matrix, IGameEngine engine, GameSettings settings, IToolBox toolBox)
         {
             this.Drawer = drawer;
             this.Matrix = matrix;
             this._engine = engine;
             this._gameSettings = settings;
+            this._toolBox = toolBox;
 
             this._engine.OnInitialize += OnGameEngineInitialize;
 
@@ -45,11 +48,31 @@ namespace Ozow.GameOfLife.Game
         {
             this.Matrix.Initialize();
             this.InitializeActiveFormations();
+            this.InitializeBoard();
+        }
+
+        private void InitializeBoard()
+        {
+            foreach (IActiveFormation formation in this.ActiveFormations)
+                formation.PrintFormation();
+
+            this.Drawer.Refresh(this.Matrix.TheGrid);
+
         }
 
         private void InitializeActiveFormations()
         {
-            throw new NotImplementedException();
+            this.ActiveFormations = new List<IActiveFormation>();
+            ICellPosition randomPosition;
+            IActiveFormation tempFormation;
+
+            foreach (IFormation formation in this._gameSettings.Formations)
+            {
+                randomPosition = this._toolBox.GetRandomCellPosition();
+                tempFormation = new ActiveFormation(formation, this.Matrix.TheGrid, randomPosition);
+                this.ActiveFormations.Add(tempFormation);
+            }
+
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Ozow.GameOfLife.Game
     public class ToolBox : IToolBox
     {
         private GameSettings _gameSettings;
-
+              
         public ToolBox(GameSettings settings)
         {
             this._gameSettings = settings;
@@ -114,6 +114,18 @@ namespace Ozow.GameOfLife.Game
 
             result = random.Next(max);
 
+            return result;
+        }
+
+        public ICellPosition GetRandomCellPosition()
+        {
+            int rowMax = this._gameSettings.BoardHeight;
+            int colMax = this._gameSettings.BoardWidth;
+
+            int row = this.GenerateRandomNumber(0, rowMax);
+            int col = this.GenerateRandomNumber(0, colMax);
+
+            ICellPosition result = new CellPosition((byte)row, (byte)col);
             return result;
         }
     }
