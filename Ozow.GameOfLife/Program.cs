@@ -18,8 +18,14 @@ namespace Ozow.GameOfLife
 
             try
             {
+                ServiceCollection serviceCollection = new ServiceCollection();
+                
+                ConfigureServices(serviceCollection);
+                
                 Run(args);
+
                 Console.ReadKey();
+                
                 return 0;
             }
             catch (Exception ex)
@@ -32,9 +38,11 @@ namespace Ozow.GameOfLife
 
         static void Run(string[] args)
         {
-            ServiceCollection serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
-            string rawString = configuration.GetSection("text").Value.ToLower();
+            IGameEngine gameEngine = serviceProvider.GetService<IGameEngine>();
+            
+            gameEngine.Initialize();
+            
+            gameEngine.Start();
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)

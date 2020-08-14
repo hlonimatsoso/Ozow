@@ -29,13 +29,10 @@ namespace Ozow.GameOfLife.Game
         {
             this.timer.Interval = this.GameSetings.GameSpeed;
             this.timer.Elapsed += Refresh;
-            this.OnIntialize();
+
+            this.OnInitialize?.Invoke();
         }
 
-        private void OnIntialize()
-        {
-            this.OnInitialize();
-        }
 
         private void Refresh(object sender, ElapsedEventArgs e)
         {
@@ -44,13 +41,13 @@ namespace Ozow.GameOfLife.Game
 
         public void Start()
         {
-            this.timer.Enabled = true;
-
+           this.timer.Enabled = true;
+            this.OnGameStart?.Invoke();                
         }
 
         public void End()
         {
-            throw new NotImplementedException();
+            this.OnGameEnd?.Invoke();
         }
     }
 }
