@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Ozow.GameOfLife.Game;
+using Ozow.GameOfLife.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
-namespace Ozow.Sorting
+namespace Ozow.GameOfLife
 {
     class Program
     {
@@ -22,7 +22,7 @@ namespace Ozow.Sorting
                 Console.ReadKey();
                 return 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.ToString());
@@ -34,25 +34,7 @@ namespace Ozow.Sorting
         {
             ServiceCollection serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
-
             string rawString = configuration.GetSection("text").Value.ToLower();
-
-            IAlphabetMachine alphabetMachine = serviceProvider.GetService<IAlphabetMachine>();
-
-            Alphabet tempAlphabet;
-
-            // Create alphabet list
-            foreach (char @char in rawString)
-            {
-                tempAlphabet = alphabetMachine.CreateAlphabet(@char);
-                alphabetMachine.AddAlphabet(tempAlphabet);
-            }
-
-            // Get output string from alphabet list
-            string outputString = alphabetMachine.GetOutPutString();
-
-            Console.WriteLine($"Ouput: {outputString}");
-
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
@@ -64,8 +46,9 @@ namespace Ozow.Sorting
 
             serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
 
-            serviceCollection.AddTransient<IAlphabetMachine, AlphabetMachine>();
-            serviceCollection.AddTransient<Alphabet>();
+            serviceCollection.AddTransient<IGameEngine, GameEngine>();
+            serviceCollection.AddTransient<GameEngine>();
+            serviceCollection.Configure<GameSettings>(configuration.GetSection("GameSettings"));
 
             serviceProvider = serviceCollection.BuildServiceProvider();
         }
