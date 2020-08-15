@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Ozow.GameOfLife.Game.Instructions
 {
-    public class X : IInstruction
+    public class Right : IInstruction
     {
-        public string Name { get { return "Resserect"; } }
+        public string Name { get { return "Move cursor Right"; } }
         public ICell[,] Grid { get ; set ; }
         public ICellPosition Position { get ; set ; }
 
 
-        public X(ICell[,] grid, ICellPosition position)
+        public Right(ICell[,] grid, ICellPosition position)
         {
             this.Grid = grid;
             this.Position = position;
@@ -22,7 +22,8 @@ namespace Ozow.GameOfLife.Game.Instructions
         {
             bool result = false;
 
-            this.Grid[this.Position.Row,this.Position.Column].State = CellState.Alive;
+            this.Position.Column += 1;
+            result = true;
 
             return result;
         }

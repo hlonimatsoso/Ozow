@@ -1,4 +1,5 @@
-﻿using Ozow.GameOfLife.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using Ozow.GameOfLife.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,27 +9,33 @@ namespace Ozow.GameOfLife.Game
 {
     public class GameEngine : IGameEngine
     {
-        public GameSettings GameSetings { get; set; }
+        public IOptions<GameSettings> GameSetings { get; set; }
         public Timer timer { get; set; }
-
-        private IGameEngine _engine;
+        public IGameBoard GameBoard { get; set; }
 
         public event Action OnRefresh;
         public event Action OnGameStart;
         public event Action OnGameEnd;
         public event Action OnInitialize;
 
-        public GameEngine(GameSettings settings, IGameEngine engine)
+        public GameEngine(IGameBoard board, IOptions<GameSettings> settings)
         {
+            this.GameBoard = board;
             this.GameSetings = settings;
-            this._engine = engine;
-            this.Initialize();
+            //this.Initialize();
         }
 
         public void Initialize()
         {
-            this.timer.Interval = this.GameSetings.GameSpeed;
+            this.timer = new Timer(this.GameSetings.Value.GameSpeed);
+
             this.timer.Elapsed += Refresh;
+
+            this.OnInitialize += this.GameBoard.OnInitialize;
+            this.OnRefresh += this.GameBoard.OnRefresh;
+            this.OnGameStart += this.GameBoard.OnGameStart;
+            this.OnGameEnd += this.GameBoard.OnGameEnd;
+
 
             this.OnInitialize?.Invoke();
         }
@@ -36,7 +43,12 @@ namespace Ozow.GameOfLife.Game
 
         private void Refresh(object sender, ElapsedEventArgs e)
         {
+            timer.Stop();
+
+            Console.WriteLine(e.SignalTime);
             this.OnRefresh?.Invoke();
+            timer.Start();
+
         }
 
         public void Start()

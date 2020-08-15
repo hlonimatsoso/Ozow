@@ -11,5 +11,6 @@ namespace Ozow.GameOfLife.Game
         public byte ID { get; set; }
         public byte Width { get; set; }
         public string Instructions { get; set; }
+        public bool IsActive { get ; set ; }
     }
 }

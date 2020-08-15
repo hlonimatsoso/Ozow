@@ -52,20 +52,22 @@ namespace Ozow.GameOfLife
                         .AddJsonFile("AppSettings.json", false)
                         .Build();
 
+            serviceCollection.AddOptions();
             serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
+            serviceCollection.AddTransient<IFormation, Formation>();
+
+            serviceCollection.Configure<GameSettings>(configuration.GetSection("GameSettings"));
 
             serviceCollection.AddTransient<IActiveFormation, ActiveFormation>();
             serviceCollection.AddTransient<ICell, Cell>();
             serviceCollection.AddTransient<ICellPosition, CellPosition>();
-            serviceCollection.AddTransient<IFormation, Formation>();
-            serviceCollection.AddTransient<IGameBoard, GameBoard>();
-            serviceCollection.AddTransient<IGameEngine, GameEngine>();
+            serviceCollection.AddSingleton<IGameBoard, GameBoard>();
+            serviceCollection.AddSingleton<IGameEngine, GameEngine>();
             serviceCollection.AddTransient<IGameUiDrawer, Piccasso>();
-            serviceCollection.Configure<GameSettings>(configuration.GetSection("GameSettings"));
             serviceCollection.AddTransient<IActiveFormation, ActiveFormation>();
             serviceCollection.AddTransient<IInstruction, Instruction>();
             serviceCollection.AddTransient<IMatrix, TheMatrix>();
-            serviceCollection.AddTransient<IToolBox, ToolBox>();
+            serviceCollection.AddSingleton<IToolBox, ToolBox>();
 
 
             serviceProvider = serviceCollection.BuildServiceProvider();

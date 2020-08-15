@@ -13,9 +13,23 @@ namespace Ozow.GameOfLife.Game
 
         public byte BoardWidth { get; set; }
 
-        public List<IFormation> Formations { get; set; }
+        public string AliveSymbol { get; set; }
+        
+        public string DeadSymbol { get; set; }
+
+        public string WallSymbol { get; set; }
+
+        public string ExplosionSymbol { get; set; }
+
+        public byte LowKillCount { get; set; }
+
+        public byte HighKillCount { get; set; }
+
+        public byte ResserectionCount { get; set; }
+        public Formation[] Formations { get; set; }
+
 
     }
 
-   
+
 }

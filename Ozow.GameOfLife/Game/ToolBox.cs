@@ -1,26 +1,36 @@
-﻿using Ozow.GameOfLife.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using Ozow.GameOfLife.Game.Instructions;
+using Ozow.GameOfLife.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Ozow.GameOfLife.Game
 {
     public class ToolBox : IToolBox
     {
-        private GameSettings _gameSettings;
-              
-        public ToolBox(GameSettings settings)
+        private IOptions<GameSettings> _gameSettings;
+
+        public Random Random { get; set; }
+
+        public ToolBox(IOptions<GameSettings> settings)
         {
             this._gameSettings = settings;
+            this.Random = new Random(0);
         }
 
+        public List<ICellPosition> GetAllNeighbourgs(byte row, byte col)
+        {
+            return GetAllNeighbourgs(new CellPosition(row, col));
+        }
         public List<ICellPosition> GetAllNeighbourgs(ICellPosition position)
         {
             List<ICellPosition> result = new List<ICellPosition>();
             List<ICellPosition> x = this.Get_X_Neighbourgs(position);
             List<ICellPosition> y = this.Get_Y_Neighbourgs(position);
             List<ICellPosition> cross = this.Get_CrossSection_Neighbourgs(position);
-            
+
             result.AddRange(x);
             result.AddRange(y);
             result.AddRange(cross);
@@ -35,13 +45,13 @@ namespace Ozow.GameOfLife.Game
 
             // Get X neighboughs
             if (position.Column == 0) // No Left neighbour
-                result.Add(new CellPosition((byte)(position.Row + 1), position.Column));
-            if (position.Column == _gameSettings.BoardWidth) // No right neighbour
-                result.Add(new CellPosition((byte)(position.Row - 1), position.Column));
+                result.Add(new CellPosition((byte)(position.Row), (byte)(position.Column + 1)));
+            else if (position.Column == _gameSettings.Value.BoardWidth - 1) // No right neighbour
+                result.Add(new CellPosition((byte)(position.Row), (byte)(position.Column - 1)));
             else // Both left & right neighbours apply
             {
-                result.Add(new CellPosition((byte)(position.Row + 1), position.Column));
-                result.Add(new CellPosition((byte)(position.Row - 1), position.Column));
+                result.Add(new CellPosition((byte)(position.Row), (byte)(position.Column + 1)));
+                result.Add(new CellPosition((byte)(position.Row), (byte)(position.Column - 1)));
             }
 
             return result;
@@ -55,7 +65,7 @@ namespace Ozow.GameOfLife.Game
             // Get Y neighboughs
             if (position.Row == 0) // // No top neighbour
                 result.Add(new CellPosition((byte)(position.Row + 1), position.Column));
-            if (position.Column == _gameSettings.BoardHeight) // No bottom neighbour
+            else if (position.Row == _gameSettings.Value.BoardHeight - 1) // No bottom neighbour
                 result.Add(new CellPosition((byte)(position.Row - 1), position.Column));
             else // Both top & bottom neighbours apply
             {
@@ -73,20 +83,24 @@ namespace Ozow.GameOfLife.Game
             List<ICellPosition> result = new List<ICellPosition>();
 
             // Top left
-            if (position.Row - 1 >= 0 && position.Column - 1 <= this._gameSettings.BoardWidth)
+            if (position.Row - 1 >= 0 && 
+                position.Column - 1 >= 0)
                 result.Add(new CellPosition((byte)(position.Row - 1), (byte)(position.Column - 1)));
 
 
-            // Top left
-            if (position.Row - 1 >= 0 && position.Column + 1 <= this._gameSettings.BoardWidth)
+            // Top right
+            if (position.Row - 1 >= 0 && 
+                position.Column + 1 <= this._gameSettings.Value.BoardWidth -1)
                 result.Add(new CellPosition((byte)(position.Row - 1), (byte)(position.Column + 1)));
 
             // Bottom left
-            if (position.Row + 1 <= this._gameSettings.BoardHeight && position.Column - 1 <= this._gameSettings.BoardHeight)
+            if (position.Row + 1 <= this._gameSettings.Value.BoardHeight - 1 &&
+                position.Column - 1 >= 0)
                 result.Add(new CellPosition((byte)(position.Row + 1), (byte)(position.Column - 1)));
 
-            // Bottmo right
-            if (position.Row + 1 <= this._gameSettings.BoardHeight && position.Column + 1 <= this._gameSettings.BoardHeight)
+            // Bottom right
+            if (position.Row + 1 <= this._gameSettings.Value.BoardHeight - 1 && 
+                position.Column + 1 <= this._gameSettings.Value.BoardWidth - 1)
                 result.Add(new CellPosition((byte)(position.Row + 1), (byte)(position.Column + 1)));
 
             return result;
@@ -98,9 +112,9 @@ namespace Ozow.GameOfLife.Game
         {
             bool result = false;
 
-            if (position.Row == 0 || position.Row == _gameSettings.BoardHeight)
+            if (position.Row == 0 || position.Row == _gameSettings.Value.BoardHeight)
                 result = true;
-            else if (position.Column == 0 || position.Column == _gameSettings.BoardWidth)
+            else if (position.Column == 0 || position.Column == _gameSettings.Value.BoardWidth)
                 result = true;
 
             return result;
@@ -110,22 +124,68 @@ namespace Ozow.GameOfLife.Game
         {
             int result = -1;
 
-            Random random = new Random(min);
 
-            result = random.Next(max);
+            result = this.Random.Next(max);
 
             return result;
         }
 
         public ICellPosition GetRandomCellPosition()
         {
-            int rowMax = this._gameSettings.BoardHeight;
-            int colMax = this._gameSettings.BoardWidth;
+            int rowMax = this._gameSettings.Value.BoardHeight;
+            int colMax = this._gameSettings.Value.BoardWidth;
 
             int row = this.GenerateRandomNumber(0, rowMax);
             int col = this.GenerateRandomNumber(0, colMax);
 
             ICellPosition result = new CellPosition((byte)row, (byte)col);
+            return result;
+        }
+
+        public Queue<IInstruction> CreateInstructions(string instructionString, ICell[,] grid, ICellPosition position)
+        {
+            Queue<IInstruction> result = new Queue<IInstruction>();
+            IInstruction tempInstruction = null;
+
+            var set = instructionString.Split(' ');
+
+            foreach (string instruction in set)
+            {
+                switch (instruction)
+                {
+                    case "x":
+                        tempInstruction = new Live(grid, position);
+                        break;
+                    case "up":
+                        tempInstruction = new Up(grid, position);
+                        break;
+                    case "down":
+                        tempInstruction = new Down(grid, position);
+                        break;
+                    default:
+                    case "left":
+                        tempInstruction = new Left(grid, position);
+                        break;
+                    case "right":
+                        tempInstruction = new Right(grid, position);
+                        break;
+                }
+
+                result.Enqueue(tempInstruction);
+            }
+
+            return result;
+        }
+
+        public bool IsCellWall(byte row, byte col)
+        {
+            bool result = false;
+
+            if (row == 0 || row == _gameSettings.Value.BoardHeight - 1)
+                result = true;
+            else if (col == 0 || col == _gameSettings.Value.BoardWidth - 1)
+                result = true;
+
             return result;
         }
     }

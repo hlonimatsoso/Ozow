@@ -8,6 +8,11 @@ namespace Ozow.GameOfLife.Interfaces
     {
         public ICell[,] TheGrid { get; set; }
 
+        public ICell[,] TheNextGenerationGrid { get; set; }
+
+        public IToolBox ToolBox { get; set; }
+
+
         public void GenerateNextGeneration();
 
         public void GenerateDefaultGeneration();

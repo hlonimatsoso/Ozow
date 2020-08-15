@@ -10,6 +10,8 @@ namespace Ozow.GameOfLife.Interfaces
 
         public byte ID { get; set; }
 
+        public bool IsActive { get; set; }
+
         public byte Width { get; set; }
 
         public string Instructions { get; set; }

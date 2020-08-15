@@ -1,4 +1,5 @@
-﻿using Ozow.GameOfLife.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using Ozow.GameOfLife.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,39 +13,36 @@ namespace Ozow.GameOfLife.Game
         public List<IInstruction> Instructions { get; set; }
         public List<IActiveFormation> ActiveFormations { get; set; }
 
-        private IGameEngine _engine;
-
-        private GameSettings _gameSettings;
+        private IOptions<GameSettings> _gameSettings;
 
         private IToolBox _toolBox;
 
-        public GameBoard(IGameUiDrawer drawer, IMatrix matrix, IGameEngine engine, GameSettings settings, IToolBox toolBox)
+        public GameBoard(IGameUiDrawer drawer, IMatrix matrix, IOptions<GameSettings> settings, IToolBox toolBox)
         {
             this.Drawer = drawer;
             this.Matrix = matrix;
-            this._engine = engine;
             this._gameSettings = settings;
             this._toolBox = toolBox;
-
-            this._engine.OnInitialize += OnGameEngineInitialize;
-
-            this._engine.OnGameStart += OnGameEngineStart;
-
-            this._engine.OnRefresh += OnRefresh;
+            
         }
 
-        private void OnRefresh()
+        public void OnRefresh()
         {
             this.Matrix.GenerateNextGeneration();
-            this.Drawer.Refresh(this.Matrix.TheGrid);
+            this.Drawer.Refresh(this.Matrix.TheNextGenerationGrid);
         }
 
-        private void OnGameEngineStart()
+        public void OnGameStart()
         {
             this.Drawer.Refresh(this.Matrix.TheGrid);
         }
 
-        private void OnGameEngineInitialize()
+        public void OnGameEnd()
+        {
+         //   this.Drawer.Refresh(this.Matrix.TheGrid);
+        }
+
+        public void OnInitialize()
         {
             this.Matrix.Initialize();
             this.InitializeActiveFormations();
@@ -54,7 +52,7 @@ namespace Ozow.GameOfLife.Game
         private void InitializeBoard()
         {
             foreach (IActiveFormation formation in this.ActiveFormations)
-                formation.PrintFormation();
+                formation.PrintFormation(this.Matrix.TheGrid);
 
             this.Drawer.Refresh(this.Matrix.TheGrid);
 
@@ -66,10 +64,14 @@ namespace Ozow.GameOfLife.Game
             ICellPosition randomPosition;
             IActiveFormation tempFormation;
 
-            foreach (IFormation formation in this._gameSettings.Formations)
+            foreach (IFormation formation in this._gameSettings.Value.Formations)
             {
+                if (!formation.IsActive)
+                    continue;
+
                 randomPosition = this._toolBox.GetRandomCellPosition();
-                tempFormation = new ActiveFormation(formation, this.Matrix.TheGrid, randomPosition);
+                tempFormation = new ActiveFormation(formation, randomPosition,this._toolBox);
+                tempFormation.ToolBox = this._toolBox;
                 this.ActiveFormations.Add(tempFormation);
             }
 

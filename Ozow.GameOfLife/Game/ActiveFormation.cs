@@ -7,28 +7,44 @@ namespace Ozow.GameOfLife.Game
 {
     public class ActiveFormation : IActiveFormation
     {
-        public IFormation Formation { get; set ; }
+        public IFormation Formation { get; set; }
         public ICell[,] Grid { get; set; }
-        public ICellPosition Position { get; set ; }
-        public List<IInstruction> Instructions { get ; set ; }
+        public ICellPosition Position { get; set; }
+        public Queue<IInstruction> Instructions { get; set; }
+        public IToolBox ToolBox { get; set; }
 
-
-        public ActiveFormation(IFormation formation, ICell[,] grid, ICellPosition formationPosition)
+        public ActiveFormation(IFormation formation, ICellPosition formationPosition, IToolBox toolBox)
         {
             this.Formation = formation;
-            this.Grid = grid;
+
             this.Position = formationPosition;
+            this.ToolBox = toolBox;
             this.InitializeInstructions();
         }
 
         private void InitializeInstructions()
         {
-            throw new NotImplementedException();
+            this.Instructions = new Queue<IInstruction>();
+            this.Instructions = this.ToolBox.CreateInstructions(Formation.Instructions, this.Grid, this.Position);
         }
 
-        public bool PrintFormation()
+        public bool PrintFormation(ICell[,] grid)
         {
-            throw new NotImplementedException();
+            this.Grid = grid;
+            IInstruction temp;
+            int count = this.Instructions.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                temp = this.Instructions.Dequeue();
+                temp.Grid = this.Grid;
+                temp.Execute();
+            }
+                
+
+
+
+            return true;
         }
     }
 }

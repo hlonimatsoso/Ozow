@@ -15,6 +15,8 @@ namespace Ozow.GameOfLife.Interfaces
 
         event Action OnInitialize;
 
+        IGameBoard GameBoard { get; set; }
+
 
         Timer timer { get; set; }
 

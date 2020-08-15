@@ -12,5 +12,13 @@ namespace Ozow.GameOfLife.Interfaces
 
         public List<IActiveFormation> ActiveFormations { get; set; }
 
+        public void OnGameStart();
+
+        public void OnGameEnd();
+
+        public void OnRefresh();
+
+        public void OnInitialize();
+
     }
 }
