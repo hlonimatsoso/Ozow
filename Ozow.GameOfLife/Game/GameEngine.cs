@@ -43,11 +43,9 @@ namespace Ozow.GameOfLife.Game
 
         private void Refresh(object sender, ElapsedEventArgs e)
         {
-            timer.Stop();
-
-            Console.WriteLine(e.SignalTime);
+            //timer.Stop();
             this.OnRefresh?.Invoke();
-            timer.Start();
+            //timer.Start();
 
         }
 
