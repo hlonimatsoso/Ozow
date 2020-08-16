@@ -9,6 +9,23 @@ namespace Ozow.GameOfLife
 {
     class Program
     {
+
+        /*'
+            True randomnes doesn't exist, not in C# I guess, because It ALWAYS creates the same set, for every new System.Random instance min-max pair.
+            
+            So that is why there is only 1 bug left, the lack of true randomness in the game, which I will tackel soon,
+            
+            till then, randomness is archieved by changing the following :
+                
+                * Board hehight
+                * Board width
+                * Number of formations in the config (using IsActive flag)
+                * The order of those formations in the config
+                * The Game Matrix Formation Height Margin (randomness occures much later generations)
+                * The Game Matrix Formation width Margin (randomness occures much later generations)
+                * The creation of new formations, the coolest way yet.
+         */
+
         public static IConfigurationRoot configuration;
 
         public static IServiceProvider serviceProvider;

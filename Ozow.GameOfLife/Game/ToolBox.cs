@@ -179,6 +179,7 @@ namespace Ozow.GameOfLife.Game
             Queue<IInstruction> result = new Queue<IInstruction>();
             IInstruction tempInstruction = null;
 
+
             var set = instructionString.Split(' ');
 
             foreach (string instruction in set)

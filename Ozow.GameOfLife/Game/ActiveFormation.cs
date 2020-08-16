@@ -25,7 +25,8 @@ namespace Ozow.GameOfLife.Game
         private void InitializeInstructions()
         {
             this.Instructions = new Queue<IInstruction>();
-            this.Instructions = this.ToolBox.CreateInstructions(Formation.Instructions, this.Grid, this.Position);
+            if (Formation.Instructions != null)
+                this.Instructions = this.ToolBox.CreateInstructions(Formation.Instructions, this.Grid, this.Position);
         }
 
         public bool PrintFormation(ICell[,] grid)
@@ -40,7 +41,7 @@ namespace Ozow.GameOfLife.Game
                 temp.Grid = this.Grid;
                 temp.Execute();
             }
-                
+
 
 
 
