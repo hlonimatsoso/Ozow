@@ -22,7 +22,6 @@ namespace Ozow.GameOfLife.Game
         {
             this.GameBoard = board;
             this.GameSetings = settings;
-            //this.Initialize();
         }
 
         public void Initialize()
@@ -36,6 +35,8 @@ namespace Ozow.GameOfLife.Game
             this.OnGameStart += this.GameBoard.OnGameStart;
             this.OnGameEnd += this.GameBoard.OnGameEnd;
 
+            Console.WindowHeight = this.GameSetings.Value.BoardHeight + this.GameSetings.Value.WindowPadding;
+            Console.WindowWidth = this.GameSetings.Value.BoardWidth + this.GameSetings.Value.WindowPadding;
 
             this.OnInitialize?.Invoke();
         }

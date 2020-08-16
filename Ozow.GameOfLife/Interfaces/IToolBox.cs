@@ -9,6 +9,10 @@ namespace Ozow.GameOfLife.Interfaces
     {
         public Random Random { get; set; }
 
+        public Queue<byte> RandomRowCoordinates { get; set; }
+        
+        public Queue<byte> RandomColomnCoordinates { get; set; }
+
         public bool IsCellWall(ICellPosition position);
 
         public bool IsCellWall(byte row,byte col);

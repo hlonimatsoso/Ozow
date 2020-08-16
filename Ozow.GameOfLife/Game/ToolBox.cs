@@ -13,11 +13,33 @@ namespace Ozow.GameOfLife.Game
         private IOptions<GameSettings> _gameSettings;
 
         public Random Random { get; set; }
+        public Queue<byte> RandomRowCoordinates { get; set; }
+        public Queue<byte> RandomColomnCoordinates { get; set; }
 
         public ToolBox(IOptions<GameSettings> settings)
         {
             this._gameSettings = settings;
+            this.SetRandomRowsAndColumns();
+        }
+
+        private void SetRandomRowsAndColumns()
+        {
+            byte temp;
             this.Random = new Random(0);
+            this.RandomRowCoordinates = new Queue<byte>();
+            this.RandomColomnCoordinates = new Queue<byte>();
+
+            for (byte row = 0; row < this._gameSettings.Value.Formations.Length; row++)
+            {
+                temp = (byte)(this.Random.Next(this._gameSettings.Value.GameMatrixFormationHeightMargin, this._gameSettings.Value.BoardHeight - this._gameSettings.Value.GameMatrixFormationHeightMargin));
+                this.RandomRowCoordinates.Enqueue(temp);
+            }
+
+            for (byte col = 0; col < this._gameSettings.Value.Formations.Length; col++)
+            {
+                temp = (byte)(this.Random.Next(this._gameSettings.Value.GameMatrixFormationHeightMargin, this._gameSettings.Value.BoardWidth - this._gameSettings.Value.GameMatrixFormationWidthMargin));
+                this.RandomColomnCoordinates.Enqueue(temp);
+            }
         }
 
         public List<ICellPosition> GetAllNeighbourgs(byte row, byte col)
@@ -83,14 +105,14 @@ namespace Ozow.GameOfLife.Game
             List<ICellPosition> result = new List<ICellPosition>();
 
             // Top left
-            if (position.Row - 1 >= 0 && 
+            if (position.Row - 1 >= 0 &&
                 position.Column - 1 >= 0)
                 result.Add(new CellPosition((byte)(position.Row - 1), (byte)(position.Column - 1)));
 
 
             // Top right
-            if (position.Row - 1 >= 0 && 
-                position.Column + 1 <= this._gameSettings.Value.BoardWidth -1)
+            if (position.Row - 1 >= 0 &&
+                position.Column + 1 <= this._gameSettings.Value.BoardWidth - 1)
                 result.Add(new CellPosition((byte)(position.Row - 1), (byte)(position.Column + 1)));
 
             // Bottom left
@@ -99,7 +121,7 @@ namespace Ozow.GameOfLife.Game
                 result.Add(new CellPosition((byte)(position.Row + 1), (byte)(position.Column - 1)));
 
             // Bottom right
-            if (position.Row + 1 <= this._gameSettings.Value.BoardHeight - 1 && 
+            if (position.Row + 1 <= this._gameSettings.Value.BoardHeight - 1 &&
                 position.Column + 1 <= this._gameSettings.Value.BoardWidth - 1)
                 result.Add(new CellPosition((byte)(position.Row + 1), (byte)(position.Column + 1)));
 
@@ -122,23 +144,22 @@ namespace Ozow.GameOfLife.Game
 
         public int GenerateRandomNumber(int min, int max)
         {
-            int result = -1;
+            int result;
 
-
-            result = this.Random.Next(max);
+            result = this.Random.Next(min, max);
 
             return result;
         }
 
         public ICellPosition GetRandomCellPosition()
         {
-            int rowMax = this._gameSettings.Value.BoardHeight;
-            int colMax = this._gameSettings.Value.BoardWidth;
+            //int rowMax = this._gameSettings.Value.BoardHeight;
+            //int colMax = this._gameSettings.Value.BoardWidth;
 
-            int row = this.GenerateRandomNumber(0, rowMax);
-            int col = this.GenerateRandomNumber(0, colMax);
+            //int row = this.GenerateRandomNumber(0, rowMax);
+            //int col = this.GenerateRandomNumber(0, colMax);
 
-            ICellPosition result = new CellPosition((byte)row, (byte)col);
+            ICellPosition result = new CellPosition(this.RandomRowCoordinates.Dequeue(), this.RandomColomnCoordinates.Dequeue());
             return result;
         }
 

@@ -26,6 +26,13 @@ namespace Ozow.GameOfLife.Game
         public byte HighKillCount { get; set; }
 
         public byte ResserectionCount { get; set; }
+
+        public byte WindowPadding { get; set; }
+
+        public byte GameMatrixFormationHeightMargin { get; set; }
+
+        public byte GameMatrixFormationWidthMargin { get; set; }
+
         public Formation[] Formations { get; set; }
 
 
