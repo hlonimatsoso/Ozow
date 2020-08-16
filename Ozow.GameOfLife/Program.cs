@@ -11,7 +11,9 @@ namespace Ozow.GameOfLife
     {
 
         /*'
-            True randomnes doesn't exist, not in C# I guess, because It ALWAYS creates the same set, for every new System.Random instance min-max pair.
+            True randomnes doesn't exist, not in C# I guess, because It ALWAYS creates the same set, for every new System.Random instance min-max pair,
+
+            meaning, all formations start off in EXACTLY the same position when you re-run the game WITHOUT changing any of the input variables.
             
             So that is why there is only 1 bug left, the lack of true randomness in the game, which I will tackel soon,
             
