@@ -13,15 +13,15 @@ namespace Ozow.GameOfLife
         /*'
             True randomnes doesn't exist, not in C# I guess, because It ALWAYS creates the same set, for every new System.Random instance min-max pair,
 
-            meaning, all formations start off in EXACTLY the same position when you re-run the game WITHOUT changing any of the input variables.
+            meaning, all formations will start off in EXACTLY the same position when you re-run the game WITHOUT changing any of the input variables discussed below.
             
-            So that is why there is only 1 bug left, the lack of true randomness in the game, which I will tackel soon,
+            So that is why there is only 1 bug left, the lack of true randomness in the game when it comes to the INITIAL position of all active formations, which I will tackel soon,
             
-            till then, randomness is archieved by changing the following :
+            till then, randomness is archieved by changing any or all the following :
                 
                 * Board hehight
                 * Board width
-                * Number of formations in the config (using IsActive flag)
+                * Number of formations in the config (using IsActive flag) : More formations increase chances of overlap on start up disfiguring the formation and changing the grid unpredictably
                 * The order of those formations in the config
                 * The Game Matrix Formation Height Margin (randomness occures much later generations)
                 * The Game Matrix Formation width Margin (randomness occures much later generations)
