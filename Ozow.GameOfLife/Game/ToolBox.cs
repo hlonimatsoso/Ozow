@@ -31,13 +31,24 @@ namespace Ozow.GameOfLife.Game
 
             for (byte row = 0; row < this._gameSettings.Value.Formations.Length; row++)
             {
-                temp = (byte)(this.Random.Next(this._gameSettings.Value.GameMatrixFormationHeightMargin, this._gameSettings.Value.BoardHeight - this._gameSettings.Value.GameMatrixFormationHeightMargin));
+                do
+                {
+                    temp = (byte)(this.Random.Next(this._gameSettings.Value.GameMatrixFormationHeightMargin, this._gameSettings.Value.BoardHeight - this._gameSettings.Value.GameMatrixFormationHeightMargin));
+
+                } while ((this.RandomRowCoordinates.Contains(temp)));
+
                 this.RandomRowCoordinates.Enqueue(temp);
             }
 
             for (byte col = 0; col < this._gameSettings.Value.Formations.Length; col++)
             {
-                temp = (byte)(this.Random.Next(this._gameSettings.Value.GameMatrixFormationHeightMargin, this._gameSettings.Value.BoardWidth - this._gameSettings.Value.GameMatrixFormationWidthMargin));
+
+                do
+                {
+                    temp = (byte)(this.Random.Next(this._gameSettings.Value.GameMatrixFormationHeightMargin, this._gameSettings.Value.BoardWidth - this._gameSettings.Value.GameMatrixFormationWidthMargin));
+
+                } while ((this.RandomColomnCoordinates.Contains(temp)));
+
                 this.RandomColomnCoordinates.Enqueue(temp);
             }
         }
